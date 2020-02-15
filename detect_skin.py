@@ -8,10 +8,11 @@ hist = None
 while True:
     _,frame = cam.read()
     frame = cv2.flip(frame,1)
-    cv2.rectangle(frame,(422,80),(594,418),(0,0,255),2)
+    cv2.rectangle(frame,(432,120),(575,365),(0,0,255),2)
 
-    roi = frame[80:418,422:594]
+    roi = frame[120:365,432:575]
     hsv = cv2.cvtColor(roi,cv2.COLOR_BGR2HSV)
+    cv2.imshow('roi',hsv)
     cv2.imshow('frame',frame)
 
     k = cv2.waitKey(5)
