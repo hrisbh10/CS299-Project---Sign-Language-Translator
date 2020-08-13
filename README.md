@@ -14,7 +14,7 @@ You can try out the model using opcam.py script.
 
 ## Android Application
 
-An App created using TFLite module of mobnetv2_flip and CameraX API, allowing real-time sign recognition. 
+An App created using TFLite module of mobnetv2_flip and CameraX API, allowing real-time sign recognition. Got to learn about handling callback events and handling events in threads for latency reduction.
 
 
 
