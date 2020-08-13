@@ -4,46 +4,38 @@ from tensorflow import keras
 import pickle
 import os
 
-DATA_DIR = "/home/jarvis/ML/asl-alphabet"
-TRAIN_DIR = os.path.join(DATA_DIR,"train_images")
 BATCH_SIZE = 64
 IMG_SIZE = 160
 
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-train_datagen = ImageDataGenerator()
 
-train_generator = train_datagen.flow_from_directory(
-    TRAIN_DIR,
-    target_size = (IMG_SIZE,IMG_SIZE),
-    class_mode = 'categorical',
-    batch_size= BATCH_SIZE
-)
-labels = (train_generator.class_indices)
-labels = dict((v,k) for k,v in labels.items())
+labels = []
+with open('labels.txt','r') as fin:
+	labels = fin.readlines()
+labels = [x[:-1] for x in labels]
 
 TEST_DIR = "asl_alphabet_test"
 model = keras.models.load_model('mobnetv2_flip.h5')
 
-hist = None
-with open('skin','rb') as p_in:
-    hist = pickle.load(p_in)
+#hist = None
+#with open('skin','rb') as p_in:
+#    hist = pickle.load(p_in)
 
 
-def createMask(frame):
+#def createMask(frame):
   
-    target = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-    #cv2.imshow('hsv',target)
+#    target = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+#    #cv2.imshow('hsv',target)
 
-    dst = cv2.calcBackProject([target],[0,1],hist,[0,180,0,256],1)
-    kernel1 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(12,12))
-    cv2.filter2D(dst,-1,kernel1,dst)
-    dst = cv2.GaussianBlur(dst,(15,15),0)
-    dst = cv2.medianBlur(dst,15)
-    ret,thresh = cv2.threshold(dst,35,255,cv2.THRESH_BINARY)
-    kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(15,15))
-    mask = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel2)
+#    dst = cv2.calcBackProject([target],[0,1],hist,[0,180,0,256],1)
+#    kernel1 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(12,12))
+#    cv2.filter2D(dst,-1,kernel1,dst)
+#    dst = cv2.GaussianBlur(dst,(15,15),0)
+#    dst = cv2.medianBlur(dst,15)
+#    ret,thresh = cv2.threshold(dst,35,255,cv2.THRESH_BINARY)
+#    kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(15,15))
+#    mask = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel2)
 
-    return mask
+#    return mask
 
 def keras_predict(img):
     img = cv2.resize(img,(IMG_SIZE,IMG_SIZE))
