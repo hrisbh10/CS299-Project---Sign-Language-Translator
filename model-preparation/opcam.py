@@ -14,7 +14,7 @@ with open('labels.txt','r') as fin:
 labels = [x[:-1] for x in labels]
 
 TEST_DIR = "asl_alphabet_test"
-model = keras.models.load_model('mobilenetv2_190_kaggle_bm142.h5')
+model = keras.models.load_model('mobilenetv2_192_kaggle_bm142.h5')
 
 #hist = None
 #with open('skin','rb') as p_in:

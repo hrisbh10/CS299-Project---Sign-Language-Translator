@@ -9,7 +9,7 @@ _new_model-Copy1_ python notebook contains the script for training my model. <br
 Also trained on Kaggle's GPU for better performance of models.
 
 The Base model is keras' MobileNetV2 with 'ImageNet' weights. The final model is trained on the hand dataset applying the concept of Transfer learning. <br>
-The Model is saved in "save" folder and also as different h5 files. Note: mobilenetv2_190_kaggle_bm142.h5 is the latest and recommended one.<br> 
+The Model is saved in "save" folder and also as different h5 files. Note: mobilenetv2_192_kaggle_bm142.h5 is the latest and recommended one.<br> 
 
 You can try out the model using opcam.py script.
 
