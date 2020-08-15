@@ -5,16 +5,16 @@ import pickle
 import os
 
 BATCH_SIZE = 64
-IMG_SIZE = 160
+IMG_SIZE = 192
 
-
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 labels = []
 with open('labels.txt','r') as fin:
 	labels = fin.readlines()
 labels = [x[:-1] for x in labels]
 
 TEST_DIR = "asl_alphabet_test"
-model = keras.models.load_model('mobnetv2_flip.h5')
+model = keras.models.load_model('mobilenetv2_190_kaggle_bm142.h5')
 
 #hist = None
 #with open('skin','rb') as p_in:
@@ -57,9 +57,9 @@ while True:
     #mask = createMask(frame)
     #res = cv2.bitwise_and(frame,frame,mask=mask)
     res = frame
-    txt = keras_predict(res[88:392,333:600])
-    cv2.rectangle(res,(333,88),(600,392),color=(25,233,4),thickness=3)
-    cv2.putText(res,txt,(333,84),cv2.FONT_HERSHEY_SIMPLEX,1,color=(25,233,4),thickness=4)
+    txt = keras_predict(res[82:392,333:600])
+    cv2.rectangle(res,(333,82),(600,392),color=(25,233,4),thickness=3)
+    cv2.putText(res,txt,(333,80),cv2.FONT_HERSHEY_SIMPLEX,1,color=(25,233,4),thickness=4)
     cv2.imshow('frame',res)
     
     k = cv2.waitKey(4) & 0xFF
