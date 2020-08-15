@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
-import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -18,7 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -36,8 +35,8 @@ class SignAnalyzer implements ImageAnalysis.Analyzer {
     private Handler mHandler;
     public static final int PREDICTION = 5005;
     private final int CHANNEL_SIZE = 3;
-    private final int IMAGE_HEIGHT = 160;
-    private final int IMAGE_WIDTH = 160;
+    private final int IMAGE_HEIGHT = 192;
+    private final int IMAGE_WIDTH = 192;
     private final int bufferSize = 29* Float.SIZE/Byte.SIZE;
     private final int modelInputSize = IMAGE_HEIGHT * IMAGE_WIDTH * CHANNEL_SIZE * Float.SIZE/Byte.SIZE;
     private final float IMAGE_MEAN = 0.0f;
@@ -112,7 +111,10 @@ class SignAnalyzer implements ImageAnalysis.Analyzer {
         yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
 
         byte[] imageBytes = out.toByteArray();
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        Bitmap bInput = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        Matrix matrix = new Matrix();
+        matrix.preScale(-1.0f, 1.0f);
+        return Bitmap.createBitmap(bInput, 0, 0, bInput.getWidth(), bInput.getHeight(), matrix, true);
     }
     private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap){
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(modelInputSize);

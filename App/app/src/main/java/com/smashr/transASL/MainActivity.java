@@ -19,6 +19,7 @@ import org.tensorflow.lite.Interpreter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.ExecutionException;
@@ -57,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private MappedByteBuffer loadFilePath() throws IOException {
-        AssetFileDescriptor fileDescriptor = this.getAssets().openFd("mobnet_wflip.tflite");
+    private ByteBuffer loadFilePath() throws IOException {
+        AssetFileDescriptor fileDescriptor = this.getAssets().openFd("mobnet_kaggle_192.tflite");
         FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
         FileChannel fileChannel = inputStream.getChannel();
         long startOffset = fileDescriptor.getStartOffset();
