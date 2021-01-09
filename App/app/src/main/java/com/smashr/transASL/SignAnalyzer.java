@@ -22,7 +22,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis;
@@ -31,21 +32,39 @@ import androidx.camera.core.ImageProxy;
 class SignAnalyzer implements ImageAnalysis.Analyzer {
 
     private static String TAG = "SignAnalyzer";
+    private static final int NUM_OUTPUTS = 29;
     private Activity mainActivity;
     private Handler mHandler;
     public static final int PREDICTION = 5005;
-    private final int CHANNEL_SIZE = 3;
-    private final int IMAGE_HEIGHT = 192;
-    private final int IMAGE_WIDTH = 192;
-    private final int bufferSize = 29* Float.SIZE/Byte.SIZE;
+    private static final int CHANNEL_SIZE = 3;
+    private static final int IMAGE_HEIGHT = 192;
+    private static final int IMAGE_WIDTH = 192;
+    private static final int bufferSize = NUM_OUTPUTS* Float.SIZE/Byte.SIZE;
     private final int modelInputSize = IMAGE_HEIGHT * IMAGE_WIDTH * CHANNEL_SIZE * Float.SIZE/Byte.SIZE;
     private final float IMAGE_MEAN = 0.0f;
     private final float IMAGE_STD = 255.0f;
     private Interpreter tfliteModel;
     private ArrayList<String> outputLabels = new ArrayList<>();
 
-
-    SignAnalyzer(Activity activity, Interpreter tflite,Handler handler) throws IOException {
+//    class Pair{
+//        float num;
+//        int idx;
+//    }
+//    private String getTop3Prob(FloatBuffer buffer){
+//        Pair[] array = new Pair[buffer.array().length];
+//        for(int i=0;i<NUM_OUTPUTS;++i){
+//            array[i].num = buffer.get(i);
+//            array[i].idx = i;
+//        }
+//        Arrays.sort(array, new Comparator<Pair>() {
+//            @Override
+//            public int compare(Pair pair, Pair t1) {
+//                return Float.compare(t1.num, pair.num);
+//            }
+//        });
+//        return new String(outputLabels.get(0)+"  "+outputLabels.get(1)+"  "+outputLabels.get(2));
+//    }
+    SignAnalyzer(Activity activity, Interpreter tflite, Handler handler) throws IOException {
         mainActivity = activity;
         tfliteModel = tflite;
         mHandler = handler;
@@ -60,7 +79,6 @@ class SignAnalyzer implements ImageAnalysis.Analyzer {
         while((label = reader.readLine()) != null){
             outputLabels.add(label);
         }
-
     }
 
     @Override
@@ -121,16 +139,15 @@ class SignAnalyzer implements ImageAnalysis.Analyzer {
         byteBuffer.order(ByteOrder.nativeOrder());
         int[] pixels = new int[IMAGE_WIDTH * IMAGE_HEIGHT];
         bitmap.getPixels(pixels,0,bitmap.getWidth(),0,0,bitmap.getWidth(),bitmap.getHeight());
-        int pixel = 0;
-        for(int i=0;i<IMAGE_WIDTH;++i){
-            for (int j=0;j<IMAGE_HEIGHT;++j){
-                int pixelVal = pixels[pixel++];
-                byteBuffer.putFloat((((pixelVal>>16) & 0xFF)-IMAGE_MEAN)/IMAGE_STD);
-                byteBuffer.putFloat((((pixelVal>>8) & 0xFF)-IMAGE_MEAN)/IMAGE_STD);
-                byteBuffer.putFloat((((pixelVal) & 0xFF)-IMAGE_MEAN)/IMAGE_STD);
-            }
+        for(int pixelVal: pixels){
+        	byteBuffer.putFloat((((pixelVal>>16) & 0xFF)-IMAGE_MEAN)/IMAGE_STD);
+            byteBuffer.putFloat((((pixelVal>>8) & 0xFF)-IMAGE_MEAN)/IMAGE_STD);
+            byteBuffer.putFloat((((pixelVal) & 0xFF)-IMAGE_MEAN)/IMAGE_STD);
         }
         bitmap.recycle();
         return byteBuffer;
     }
+
+
 }
+
